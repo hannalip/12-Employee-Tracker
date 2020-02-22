@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const form = require("./form.js");
+const orm = require("./orm.js");
 
 
 // This function generates all the choices for the user.  Upon selecting any of them, a new function is executed
@@ -10,41 +10,29 @@ function mainMenu() {
         type: "list",
         message: "Choose what you would like to do",
         choices: [
-            "View employees",
-            "View departments",
-            "View roles",
+            "View all employees",
+            "View all departments",
+            "View all roles",
             "Add employee",
             "Add department",
             "Add role",
             "Update role",
-            "Update manager",
-            "Display employees by manager",
-            "Delete an employee",
-            "Delete a role",
-            "Delete a department",
-            "View utilized budget for a department",
             "Quit"
         ],
         name: "choice"
     }).then(function({ choice }) {
-        if (choice === "View employees") {
-            form.viewEmployees()
-            .then(function() {
+        if (choice === "View all employees") {
+            orm.viewEmployees()
                 console.log("\n");
                 mainMenu();
-            });
-        } else if (choice === "View departments") {
-            form.viewDepartments()
-            .then(function() {
+        } else if (choice === "View all departments") {
+            orm.viewDepartments()
                 console.log("\n");
                 mainMenu();
-            });
-        } else if (choice === "View roles") {
-            form.viewRoles()
-            .then(function() {
+        } else if (choice === "View all roles") {
+            orm.viewRoles()
                 console.log("\n");
                 mainMenu();
-            });
         } else if (choice === "Add employee") {
             addEmployeePrompt();
         } else if (choice === "Add department") {
@@ -53,34 +41,24 @@ function mainMenu() {
             addRolePrompt();
         } else if (choice === "Update role") {
             updateRolePrompt();
-        } else if (choice === "Update manager") {
-            updateManagerPrompt();
-        } else if (choice === "Display employees by manager") {
-            displayByMgrPrompt();
-        } else if (choice === "Delete an employee") {
-            deleteEmployeePrompt();
-        } else if (choice === "Delete a role") {
-            deleteRolePrompt();
-        } else if (choice === "Delete a department") {
-            deleteDepartmentPrompt();
-        } else if (choice === "View utilized budget for a department") {
-            displayUtilizedBudgetPrompt();
+  
+  
         } else {
-            form.endConnection();
+            orm.endConnection();
         }
     });
 }
 
-// Prompt user for infformation about new employee, calls form function to add it to the database
+// Prompt user for infformation about new employee, calls orm function to add it to the database
 function addEmployeePrompt() {
-    form.getEmployees()
+    orm.getEmployees()
     .then(function(res) {
         const managerArray = [];
         for (let i=0; i<res.length; i++) {
             managerArray.push(res[i].name);
         }
         managerArray.push("none");
-        form.getRoles()
+        orm.getRoles()
         .then(function(response) {
             const roleTitleArray = [];
             for (let i=0; i<response.length; i++) {
@@ -110,14 +88,14 @@ function addEmployeePrompt() {
             }]).then(function({firstName, lastName, role, manager}) {
                 const roleId = response[roleTitleArray.indexOf(role)].id;
                 if (manager === "none") {
-                    form.addEmployee(firstName, lastName, roleId)
+                    orm.addEmployee(firstName, lastName, roleId)
                     .then(function() {
                         console.log("\n");
                         mainMenu();
                     });
                 } else {
                     const managerId = res[managerArray.indexOf(manager)].id;
-                    form.addEmployee(firstName, lastName, roleId, managerId)
+                    orm.addEmployee(firstName, lastName, roleId, managerId)
                     .then(function() {
                         console.log("\n");
                         mainMenu();
@@ -128,9 +106,9 @@ function addEmployeePrompt() {
     });
 }
 
-// Prompts user for infformation needed to make new department, then calls form function to add it to the database
+// Prompts user for infformation needed to make new department, then calls orm function to add it to the database
 function addDepartmentPrompt() {
-    form.getDepartments()
+    orm.getDepartments()
     .then(function(response) {
         const deptArray = [];
         for (let i=0; i<response.length; i++) {
@@ -145,7 +123,7 @@ function addDepartmentPrompt() {
                 console.log("There is already a department with that name!\n");
                 mainMenu();
             } else {
-                form.addDepartment(deptName)
+                orm.addDepartment(deptName)
                 .then(function() {
                     console.log("\n");
                     mainMenu();
@@ -155,15 +133,15 @@ function addDepartmentPrompt() {
     });
 }
 
-// Prompts user for infformation needed to make a new role, then calls form function to add it to the database
+// Prompts user for infformation needed to make a new role, then calls orm function to add it to the database
 function addRolePrompt() {
-    form.getRoles()
+    orm.getRoles()
     .then(function(roles) {
         const roleArray = [];
         for (let i=0; i<roles.length; i++) {
             roleArray.push(roles[i].title);
         }
-        form.getDepartments()
+        orm.getDepartments()
         .then(function(deptArray) {
             const deptNames = [];
             for (let i=0; i<deptArray.length; i++) {
@@ -190,7 +168,7 @@ function addRolePrompt() {
                     console.log("Error - that title already exists!\n");
                     mainMenu();
                 } else {
-                    form.addRole(title, salary, deptId)
+                    orm.addRole(title, salary, deptId)
                     .then(function() {
                         console.log("\n");
                         mainMenu();
@@ -201,15 +179,15 @@ function addRolePrompt() {
     }); 
 }
 
-// Grabs all employees, asks user which one they want to update, asks what role the employee should have, then calls form function to update the database
+// Grabs all employees, asks user which one they want to update, asks what role the employee should have, then calls orm function to update the database
 function updateRolePrompt() {
-    form.getEmployees()
+    orm.getEmployees()
     .then(function(res) {
         const empArray = [];
         for (let i=0; i<res.length; i++) {
             empArray.push(res[i].name);
         }
-        form.getRoles()
+        orm.getRoles()
         .then(function(response) {
             const roleArray = [];
             for (let i=0; i<response.length; i++) {
@@ -228,7 +206,7 @@ function updateRolePrompt() {
                 name: "role"
             }]).then(function({employee, role}) {
                 const empId = res[empArray.indexOf(employee)].id;
-                form.updateRole(empId, role)
+                orm.updateRole(empId, role)
                 .then(function() {
                     console.log("\n");
                     mainMenu();
@@ -238,137 +216,8 @@ function updateRolePrompt() {
     })
 }
 
-// Grabs all employees, asks user which one they want to update, asks what manager the employee should have, then calls form function to update the database
-function updateManagerPrompt() {
-    form.getEmployees()
-    .then(function(employees) {
-        const empArray = [];
-        for (let i=0; i<employees.length; i++) {
-            empArray.push(employees[i].name);
-        }
-        inquirer.prompt([{
-            type: "list",
-            message: "Select the employee whose manager you would like to update",
-            choices: empArray,
-            name: "employee"
-        },
-        {
-            type: "list",
-            message: "Select the employee's new manager",
-            choices: empArray,
-            name: "manager"
-        }]).then(function({employee, manager}) {
-            if (employee === manager) {
-                console.log("Error - you cannot assign an employee to manage him/herself!");
-                mainMenu();
-            } else {
-                const empId = employees[empArray.indexOf(employee)].id;
-                const mgrId = employees[empArray.indexOf(manager)].id;
-                form.updateManager(empId, mgrId)
-                .then(function() {
-                    console.log("\n");
-                    mainMenu();
-                });
-            }
-        });
-    });
-}
 
-// Grabs all employees, asks the user for which one they want to see direct reports, then calls form function to query database and display results
-function displayByMgrPrompt() {
-    form.getEmployees()
-    .then(function(employees) {
-        const empArray = [];
-        for (let i=0; i<employees.length; i++) {
-            empArray.push(employees[i].name);
-        }
-        inquirer.prompt({
-            type: "list",
-            message: "Select the manager whose employees you would like to view",
-            choices: empArray,
-            name: "manager"
-        }).then(function({manager}) {
-            const mgrId = employees[empArray.indexOf(manager)].id;
-            form.viewEmpsByMgr(mgrId)
-            .then(function() {
-                console.log("\n");
-                mainMenu();
-            });
-        });
-    });
-}
 
-// Grabs all employees, asks user which one they want to delete, then calls form function to delete it from the database
-function deleteEmployeePrompt() {
-    form.getEmployees()
-    .then(function(employees) {
-        const empArray = [];
-        for (let i=0; i<employees.length; i++) {
-            empArray.push(employees[i].name);
-        }
-        inquirer.prompt({
-            type: "list",
-            message: "Which employee would you like to delete?",
-            choices: empArray,
-            name: "employee"
-        }).then(function({employee}) {
-            const empId = employees[empArray.indexOf(employee)].id;
-            form.deleteRecord("employees", empId)
-            .then(function() {
-                console.log("\n");
-                mainMenu();
-            });
-        });
-    });
-}
-
-// Grabs all roles, asks user which one they want to delete, then calls form function to delete it from the database
-function deleteRolePrompt() {
-    form.getRoles()
-    .then(function(roles) {
-        const roleArray = [];
-        for (let i=0; i<roles.length; i++) {
-            roleArray.push(roles[i].title);
-        }
-        inquirer.prompt({
-            type: "list",
-            message: "Which role would you like to delete?",
-            choices: roleArray,
-            name: "role"
-        }).then(function({role}) {
-            const roleId = roles[roleArray.indexOf(role)].id;
-            form.deleteRecord("roles", roleId)
-            .then(function() {
-                console.log("\n");
-                mainMenu();
-            });
-        });
-    });
-}
-
-// Grabs all departments, asks user which one they want to delete, then calls form function to delete it from the database
-function deleteDepartmentPrompt() {
-    form.getDepartments()
-    .then(function(depts) {
-        const deptArray = [];
-        for (let i=0; i<depts.length; i++) {
-            deptArray.push(depts[i].name);
-        }
-        inquirer.prompt({
-            type: "list",
-            message: "Which department would you like to delete?",
-            choices: deptArray,
-            name: "dept"
-        }).then(function({dept}) {
-            const deptId = depts[deptArray.indexOf(dept)].id;
-            form.deleteRecord("departments", deptId)
-            .then(function() {
-                console.log("\n");
-                mainMenu();
-            });
-        });
-    });
-}
 
 
 mainMenu();
