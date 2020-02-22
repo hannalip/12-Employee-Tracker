@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-
+const form = require("./form.js");
 
 
 // This function generates all the choices for the user.  Upon selecting any of them, a new function is executed
@@ -370,28 +370,5 @@ function deleteDepartmentPrompt() {
     });
 }
 
-// Grabs all departments, asks user for which one they want to see sum of salaries, then calls form function to query database and display results
-function displayUtilizedBudgetPrompt() {
-    form.getDepartments()
-    .then(function(depts) {
-        const deptArray = [];
-        for (let i=0; i<depts.length; i++) {
-            deptArray.push(depts[i].name);
-        }
-        inquirer.prompt({
-            type: "list",
-            message: "For which department would you like to view the utilized budget?",
-            choices: deptArray,
-            name: "dept"
-        }).then(function({dept}) {
-            const deptId = depts[deptArray.indexOf(dept)].id;
-            form.viewUtilizedBudget(deptId)
-            .then(function() {
-                console.log("\n");
-                mainMenu();
-            });
-        });
-    });
-}
 
 mainMenu();

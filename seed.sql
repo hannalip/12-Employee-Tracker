@@ -6,7 +6,7 @@ USE tracker_db;
 
 CREATE TABLE departments (
     id INT(10) NOT NULL AUTO_INCREMENT,
-    department VARCHAR(30) NOT NULL,
+    name VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -26,7 +26,7 @@ CREATE TABLE employees (
     role_id INT(10) NOT NULL,
     manager_id INT(10),
     PRIMARY KEY (id)
-)
+);
 
 
 INSERT INTO departments (department)

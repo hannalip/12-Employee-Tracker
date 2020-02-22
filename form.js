@@ -1,4 +1,4 @@
-const connection = require("./connection.js");
+const connection = require("./connections.js");
 
 const form = {
     addDepartment: function(deptName) {
