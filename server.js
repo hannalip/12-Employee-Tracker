@@ -51,18 +51,16 @@ function mainMenu() {
 
 // Prompt user for infformation about new employee, calls orm function to add it to the database
 function addEmployeePrompt() {
-    orm.getEmployees()
-    .then(function(res) {
+    const employeesResponse = orm.getEmployees()
         const managerArray = [];
-        for (let i=0; i<res.length; i++) {
-            managerArray.push(res[i].name);
+        for (let i=0; i<employeesResponse.length; i++) {
+            managerArray.push(employeesResponse[i].name);
         }
         managerArray.push("none");
-        orm.getRoles()
-        .then(function(response) {
+        const rolesResponse = orm.getRoles()
             const roleTitleArray = [];
-            for (let i=0; i<response.length; i++) {
-                roleTitleArray.push(response[i].title);
+            for (let i=0; i<rolesResponse.length; i++) {
+                roleTitleArray.push(rolesResponse[i].title);
             }
             inquirer.prompt([{
                 type: "input",
@@ -86,33 +84,30 @@ function addEmployeePrompt() {
                 choices: managerArray,
                 name: "manager"
             }]).then(function({firstName, lastName, role, manager}) {
-                const roleId = response[roleTitleArray.indexOf(role)].id;
+                const roleId = rolesResponse[roleTitleArray.indexOf(role)].id;
                 if (manager === "none") {
                     orm.addEmployee(firstName, lastName, roleId)
-                    .then(function() {
                         console.log("\n");
                         mainMenu();
-                    });
+                
                 } else {
                     const managerId = res[managerArray.indexOf(manager)].id;
                     orm.addEmployee(firstName, lastName, roleId, managerId)
-                    .then(function() {
+                
                         console.log("\n");
                         mainMenu();
-                    });
+               
                 }
             });
-    });
-    });
+  
 }
 
 // Prompts user for infformation needed to make new department, then calls orm function to add it to the database
 function addDepartmentPrompt() {
-    orm.getDepartments()
-    .then(function(response) {
+    const departmentResponse = orm.getDepartments()
         const deptArray = [];
-        for (let i=0; i<response.length; i++) {
-            deptArray.push(response[i].name);
+        for (let i=0; i<departmentResponse.length; i++) {
+            deptArray.push(departmentResponse[i].name);
         }
         inquirer.prompt({
             type: "input",
@@ -130,19 +125,17 @@ function addDepartmentPrompt() {
                 });
             }
         });
-    });
+  
 }
 
 // Prompts user for infformation needed to make a new role, then calls orm function to add it to the database
 function addRolePrompt() {
-    orm.getRoles()
-    .then(function(roles) {
+    const addRoleResponse = orm.getRoles()
         const roleArray = [];
-        for (let i=0; i<roles.length; i++) {
-            roleArray.push(roles[i].title);
+        for (let i=0; i<addRoleResponse.length; i++) {
+            roleArray.push(addRoleResponse[i].title);
         }
-        orm.getDepartments()
-        .then(function(deptArray) {
+        const deptArray = orm.getDepartments()
             const deptNames = [];
             for (let i=0; i<deptArray.length; i++) {
                 deptNames.push(deptArray[i].name);
@@ -175,23 +168,21 @@ function addRolePrompt() {
                     });
                 }
             });
-        });
-    }); 
+       
+   
 }
 
 // Grabs all employees, asks user which one they want to update, asks what role the employee should have, then calls orm function to update the database
 function updateRolePrompt() {
-    orm.getEmployees()
-    .then(function(res) {
+    const updateRoleResponse = orm.getEmployees()
         const empArray = [];
-        for (let i=0; i<res.length; i++) {
-            empArray.push(res[i].name);
+        for (let i=0; i<updateRoleResponse.length; i++) {
+            empArray.push(updateRoleResponse[i].name);
         }
-        orm.getRoles()
-        .then(function(response) {
+        const getRoleResponse = orm.getRoles()
             const roleArray = [];
-            for (let i=0; i<response.length; i++) {
-                roleArray.push(response[i].title);
+            for (let i=0; i<getRoleResponse.length; i++) {
+                roleArray.push(getRoleResponse[i].title);
             }
             inquirer.prompt([{
                 type: "list",
@@ -212,8 +203,7 @@ function updateRolePrompt() {
                     mainMenu();
                 })
             })
-        })
-    })
+    
 }
 
 
