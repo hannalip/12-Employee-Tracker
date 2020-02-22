@@ -30,7 +30,7 @@ CREATE TABLE employees (
 
 
 INSERT INTO departments (department)
-VALUES ("Sales", "Engineering");
+VALUES ("Sales"), ("Engineering");
 
 INSERT INTO roles (department_id, title, salary)
 VALUES  (1, 'Sales Lead', 100000), (2, 'Lead Engineer', 150000);
