@@ -53,7 +53,7 @@ const orm = {
     },
     viewRoles: function () {
         const queryString = "SELECT roles.id, title, salary, name FROM roles LEFT JOIN departments ON roles.department_id = departments.id";
-        connection.query(queryString, function (err, result) {
+        return connection.query(queryString, function (err, result) {
             if (err) {
                 throw err;
             }
